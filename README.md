@@ -1,5 +1,18 @@
 # PRICE COMPARATOR
 
+Vezi readme-ul initial. trebuie instalat conda, selenium, etc
+
+```
+python -u run.py \
+    --test_file ./data/tasks_test.jsonl \
+    --api_key SECRET_XXXXXXXX_KEY \
+    --max_iter 8 \
+    --temperature 1 \
+    --seed 42 > test_tasks.log
+```
+
+### TODO
+
 - [ ] UI Input pentru nume produs
 - [ ] UI lista site-uri pe care sa caute (punem un default si sa poata sa schimbe userul)
 - [ ] UI output lista preturi <img width="1174" alt="Pasted Graphic" src="https://github.com/user-attachments/assets/9a9259e1-701b-483f-ab88-9ce5bd00e5a3" />
