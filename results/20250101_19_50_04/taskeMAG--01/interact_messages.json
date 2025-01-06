@@ -1,0 +1,57 @@
+[
+  {
+    "role": "system",
+    "content": "Imagine you are a robot browsing the web, just like humans. Now you need to complete a task. In each iteration, you will receive an Observation that includes a screenshot of a webpage and some texts. This screenshot will feature Numerical Labels placed in the TOP LEFT corner of each Web Element.\nCarefully analyze the visual information to identify the Numerical Label corresponding to the Web Element that requires interaction, then follow the guidelines and choose one of the following actions:\n1. Click a Web Element.\n2. Delete existing content in a textbox and then type content. \n3. Scroll up or down. Multiple scrolls are allowed to browse the webpage. Pay attention!! The default scroll is the whole window. If the scroll widget is located in a certain area of the webpage, then you have to specify a Web Element in that area. I would hover the mouse there and then scroll.\n4. Wait. Typically used to wait for unfinished webpage processes, with a duration of 5 seconds.\n5. Go back, returning to the previous webpage.\n6. Google, directly jump to the Google search page. When you can't find information in some websites, try starting over with Google.\n7. Answer. This action should only be chosen when all questions in the task have been solved.\n\nCorrespondingly, Action should STRICTLY follow the format:\n- Click [Numerical_Label]\n- Type [Numerical_Label]; [Content]\n- Scroll [Numerical_Label or WINDOW]; [up or down]\n- Wait\n- GoBack\n- Google\n- ANSWER; [content]\n\nKey Guidelines You MUST follow:\n* Action guidelines *\n1) To input text, NO need to click textbox first, directly type content. After typing, the system automatically hits `ENTER` key. Sometimes you should click the search button to apply search filters. Try to use simple language when searching.  \n2) You must Distinguish between textbox and search button, don't type content into the button! If no textbox is found, you may need to click the search button first before the textbox is displayed. \n3) Execute only one action per iteration. \n4) STRICTLY Avoid repeating the same action if the webpage remains unchanged. You may have selected the wrong web element or numerical label. Continuous use of the Wait is also NOT allowed.\n5) When a complex Task involves multiple questions or steps, select \"ANSWER\" only at the very end, after addressing all of these questions (steps). Flexibly combine your own abilities with the information in the web page. Double check the formatting requirements in the task when ANSWER. \n* Web Browsing Guidelines *\n1) Don't interact with useless web elements like Login, Sign-in, donation that appear in Webpages. Pay attention to Key Web Elements like search textbox and menu.\n2) Vsit video websites like YouTube is allowed BUT you can't play videos. Clicking to download PDF is allowed and will be analyzed by the Assistant API.\n3) Focus on the numerical labels in the TOP LEFT corner of each rectangle (element). Ensure you don't mix them up with other numbers (e.g. Calendar) on the page.\n4) Focus on the date in task, you must look for results that match the date. It may be necessary to find the correct year, month and day at calendar.\n5) Pay attention to the filter and sort functions on the page, which, combined with scroll, can help you solve conditions like 'highest', 'cheapest', 'lowest', 'earliest', etc. Try your best to find the answer that best fits the task.\n\nYour reply should strictly follow the format:\nThought: {Your brief thoughts (briefly summarize the info that will help ANSWER)}\nAction: {One Action format you choose}\n\nThen the User will provide:\nObservation: {A labeled screenshot Given by User}"
+  },
+  {
+    "role": "user",
+    "content": "Now given a task: Go to eMAG.ro, search for Apple's iPhone 15, and identify the price of the model.  Please interact with https://www.emag.ro/ and get the answer.Observation: A screenshot and some texts. (Omitted in context.)"
+  },
+  {
+    "role": "assistant",
+    "content": "Thought: To find the price of the iPhone 15 on eMAG.ro, the first step is to search for the product using the search input field. I will need to click the search input to begin inputting the search terms.\n\nAction: Click [1]"
+  },
+  {
+    "role": "user",
+    "content": "Observation: A screenshot and some texts. (Omitted in context.)"
+  },
+  {
+    "role": "assistant",
+    "content": "Thought: The input box for searching is labeled [0], and it is currently empty. I need to type \"iPhone 15\" into this search box to look for the product on eMAG.ro.\n\nAction: Type [0]; iPhone 15"
+  },
+  {
+    "role": "user",
+    "content": "Observation: A screenshot and some texts. (Omitted in context.)"
+  },
+  {
+    "role": "assistant",
+    "content": "Thought: The search for \"iPhone 15\" has yielded results on the page. The button labeled [2] is for searching, and after inputting \"iPhone 15,\" I need to click this button to execute the search.\n\nAction: Click [2]"
+  },
+  {
+    "role": "user",
+    "content": "Observation: A screenshot and some texts. (Omitted in context.)"
+  },
+  {
+    "role": "assistant",
+    "content": "Thought: The results for \"iPhone 15\" are displayed with various products listed. To find out the price of the iPhone 15, I need to scroll through the results to locate the specific product and its corresponding price.\n\nAction: Scroll [WINDOW]; down"
+  },
+  {
+    "role": "user",
+    "content": [
+      {
+        "type": "text",
+        "text": "Observation: please analyze the attached screenshot and give the Thought and Action. I've provided the tag name of each element and the text it contains (if text exists). Note that <textarea> or <input> may be textbox, but not exactly. Please focus more on the screenshot and then refer to the textual information.\n[2]: <input> \"\";\t[3]: <button> \"Caut\u0103\";\t[4]: \"Contul meu\";\t[5]: \"0 Favorite\";\t[6]: \"Co\u0219ul meu\";\t[7]: \"Produse la oferta\";\t[8]: \"Oferte (2)\";\t[9]: \"eMAG Genius\";\t[10]: \"Toate produsele (276)\";\t[11]: \"Livrate de eMAG (244)\";\t[12]: \"Livrat prin Tazz by eMAG\";\t[13]: \"Bucuresti - Sector 1 (43)\";\t[14]: \"Bucuresti - Sector 2 (26)\";\t[15]: \"Bucuresti - Sector 3 (26)\";\t[16]: \"Bucuresti - Sector 4 (26)\";\t[17]: \"Bucuresti - Sector 5 (39)\";\t[18]: \"Bucuresti - Sector 6 (39)\";\t[19]: \"Cluj-Napoca (41)\";\t[20]: \"Telefon mobil Apple iPhone 15, 128GB, 5G, Black\";\t[21]: \"4.69438 de review-uri(438)\";\t[22]: <button> \"Adauga in Cos\";\t[23]: \"Telefon mobil Motorola Moto g54 Power Edition, 8GB RAM, 256GB, 5G, Midnight Blue\";\t[24]: \"4.4235 de review-uri(235)\";\t[25]: <button> \"Adauga in Cos\";\t[26]: \"Telefon mobil Apple iPhone 15, 128GB, 5G, Pink\";\t[27]: \"4.69438 de review-uri(438)\";\t[28]: <button> \"Adauga in Cos\";\t[29]: <button> \"\";\t[30]: <button> \"Compara\";\t[31]: \"Super Pret\";\t[32]: <button> \"\";\t[33]: <button> \"Compara\";\t[34]: \"Promovat New Year\u2019s Deals Super Pret\";\t[35]: <button> \"\";\t[36]: <button> \"Compara\";\t[37]: \"Top Favorite\";\t[38]: \"Politica de Cookies\";\t[39]: <button> \"Accept toate\";\t[40]: <button> \"Refuz\u0103 toate\";\t[41]: <button> \"Administreaz\u0103 preferin\u021bele\";"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,{b64_img}"
+        }
+      }
+    ]
+  },
+  {
+    "role": "assistant",
+    "content": "Thought: The search results for \"iPhone 15\" include two models: one in Black and one in Pink. The price of the iPhone 15 in Black is displayed as \"999,99 Lei,\" and the iPhone 15 in Pink has the same price. I will note this price to finalize the answer.\n\nAction: ANSWER; The price of Apple's iPhone 15 is 999,99 Lei."
+  }
+]
