@@ -3,3 +3,7 @@
 /website/node_modules
 /results/202*
 /__pycache__
+
+results
+.env
+test_tasks.log

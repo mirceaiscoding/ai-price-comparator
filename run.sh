@@ -1,7 +1,10 @@
-#!/bin/bash
-nohup python -u run.py \
+set -a
+source .env
+set +a
+
+python -u run.py \
     --test_file ./data/tasks_test.jsonl \
-    --api_key SECRET_XXXXXXXX_KEY \
+    --api_key "$OPENAI_API_KEY" \
     --max_iter 8 \
     --temperature 1 \
-    --seed 42 > test_tasks.log &
+    --seed 42 > test_tasks.log
