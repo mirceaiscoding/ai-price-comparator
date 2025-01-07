@@ -1,5 +1,0 @@
-INFO - ########## TASKeMAG--01 ##########
-INFO - Iter: 0
-INFO - Calling gpt4v API...
-INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-INFO - Prompt Tokens: 2256; Completion Tokens: 51
