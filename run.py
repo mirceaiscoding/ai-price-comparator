@@ -6,7 +6,7 @@ import re
 import os
 import shutil
 import logging
-import gradio as gr
+import streamlit as st
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -251,8 +251,11 @@ def exec_action_scroll(info, web_eles, driver_task, args, obs_info):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Starting the Streamlit interface...")
+    
     parser = argparse.ArgumentParser()
-    parser.add_argument('--test_file', type=str, default='data/test.json')
+    parser.add_argument('--test_file', type=str, default='data/tasks_test.jsonl')
     parser.add_argument('--max_iter', type=int, default=5)
     parser.add_argument("--api_key", default="key", type=str, help="YOUR_OPENAI_API_KEY")
     parser.add_argument("--api_model", default="gpt-4o-mini", type=str, help="api model name")
@@ -516,7 +519,16 @@ def main():
         driver_task.quit()
         logging.info(f'Total cost: {accumulate_prompt_token / 1000 * 0.01 + accumulate_completion_token / 1000 * 0.03}')
 
+        args = parser.parse_args()
 
+        st.title("AI Price Comparator")
+        st.write("Click the button to start the app")
+
+        if st.button("Start App"):
+            start_app(args)
+
+        logging.info("Streamlit interface launched.")
+        
 if __name__ == '__main__':
     main()
     print('End of process')
