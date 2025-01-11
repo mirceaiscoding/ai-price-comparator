@@ -537,19 +537,19 @@ def main():
         st.write("You entered:", product_name)
     
     default_sites = ['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/']
+    selected_sites_list = st.multiselect("Select some websites to search from a default list:", default_sites)
     
-    custom_site = st.text_input("Add a custom website URL:", placeholder="https://example.com")
-    if custom_site:
-        default_sites.append(custom_site)
-    
-    selected_sites = st.multiselect("Select some websites to search:", default_sites)
-    if selected_sites:  
-        st.write("You selected:")
-        for i, site in enumerate(selected_sites, 1):
+    custom_site = st.text_area("You may also add custom website URLs (one per line):", placeholder="https://example1.com\nhttps://example2.com")
+    custom_sites_list = custom_site.split('\n') if custom_site else []
+
+    all_sites = selected_sites_list + custom_sites_list
+    if all_sites != []:
+        st.write("Your final list of sites:")
+        for i, site in enumerate(all_sites, 1):
             st.write(f"{i}. {site}")
     
     if st.button("Search for product prices"):
-        tasks = create_price_extraction_tasks(selected_sites, product_name)
+        tasks = create_price_extraction_tasks(all_sites, product_name)
         run_tasks(args, tasks)
 
     logging.info("Streamlit interface launched.")
