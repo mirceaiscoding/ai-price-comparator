@@ -537,6 +537,11 @@ def main():
         st.write("You entered:", product_name)
     
     default_sites = ['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/']
+    
+    custom_site = st.text_input("Add a custom website URL:", placeholder="https://example.com")
+    if custom_site:
+        default_sites.append(custom_site)
+    
     selected_sites = st.multiselect("Select some websites to search:", default_sites)
     if selected_sites:  
         st.write("You selected:")
