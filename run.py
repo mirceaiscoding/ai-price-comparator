@@ -532,15 +532,17 @@ def main():
 
     st.markdown("<h1 style='text-align: center;'>AI Price Comparator</h1>", unsafe_allow_html=True)
 
-    product_name = st.text_input("Enter the product name:", "ipad pro 2024")
-
-    default_sites = ['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/']
-    selected_sites = st.multiselect("Select websites to search:", default_sites, default=default_sites)
-    custom_site = st.text_input("Add a custom website URL:")
+    product_name = st.text_input("Enter the product name:", placeholder="Product name...")
+    if product_name:
+        st.write("You entered:", product_name)
     
-    if custom_site:
-        selected_sites.append(custom_site)
-        
+    default_sites = ['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/']
+    selected_sites = st.multiselect("Select some websites to search:", default_sites)
+    if selected_sites:  
+        st.write("You selected:")
+        for i, site in enumerate(selected_sites, 1):
+            st.write(f"{i}. {site}")
+    
     if st.button("Search for product prices"):
         tasks = create_price_extraction_tasks(selected_sites, product_name)
         run_tasks(args, tasks)
