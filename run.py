@@ -247,9 +247,27 @@ def exec_action_scroll(info, web_eles, driver_task, args, obs_info):
         else:
             actions.key_down(Keys.ALT).send_keys(Keys.ARROW_UP).key_up(Keys.ALT).perform()
     time.sleep(3)
+    
+def create_price_extraction_tasks(websites, product):
+    tasks = []
+    for i, website in enumerate(websites):
+        task = {
+            "id": f"{website.split('.')[1]}--{product}--{i+1}",
+            "ques": f"Extract the price of '{product}' from {website}. First try using the website's search function to find the product page, then try scrolling until you find the product and open the product page to extract the price.",
+            "web": website
+        }
+        tasks.append(task)
+    return tasks
 
+def load_tasks_from_file(file):
+        # Load tasks
+    tasks = []
+    with open(file, 'r', encoding='utf-8') as f:
+        for line in f:
+            tasks.append(json.loads(line))
+    return tasks
 
-def main():
+def run_tasks(tasks):
     parser = argparse.ArgumentParser()
     parser.add_argument('--test_file', type=str, default='data/test.json')
     parser.add_argument('--max_iter', type=int, default=5)
@@ -270,10 +288,10 @@ def main():
     parser.add_argument("--fix_box_color", action='store_true')
 
     args = parser.parse_args()
-
+    
     # OpenAI client
     client = OpenAI(api_key=args.api_key)
-
+    
     options = driver_config(args)
 
     # Save Result file
@@ -281,16 +299,9 @@ def main():
     result_dir = os.path.join(args.output_dir, current_time)
     os.makedirs(result_dir, exist_ok=True)
 
-    # Load tasks
-    tasks = []
-    with open(args.test_file, 'r', encoding='utf-8') as f:
-        for line in f:
-            tasks.append(json.loads(line))
-
-
     for task_id in range(len(tasks)):
         task = tasks[task_id]
-        task_dir = os.path.join(result_dir, 'task{}'.format(task["id"]))
+        task_dir = os.path.join(result_dir, 'task--{}'.format(task["id"]))
         os.makedirs(task_dir, exist_ok=True)
         setup_logger(task_dir)
         logging.info(f'########## TASK{task["id"]} ##########')
@@ -436,7 +447,7 @@ def main():
                         click_ele_number = info[0]
                         element_box = obs_info[click_ele_number]['union_bound']
                         element_box_center = (element_box[0] + element_box[2] // 2,
-                                              element_box[1] + element_box[3] // 2)
+                                            element_box[1] + element_box[3] // 2)
                         web_ele = driver_task.execute_script("return document.elementFromPoint(arguments[0], arguments[1]);", element_box_center[0], element_box_center[1])
 
                     ele_tag_name = web_ele.tag_name.lower()
@@ -473,7 +484,7 @@ def main():
                         type_ele_number = info['number']
                         element_box = obs_info[type_ele_number]['union_bound']
                         element_box_center = (element_box[0] + element_box[2] // 2,
-                                              element_box[1] + element_box[3] // 2)
+                                            element_box[1] + element_box[3] // 2)
                         web_ele = driver_task.execute_script("return document.elementFromPoint(arguments[0], arguments[1]);", element_box_center[0], element_box_center[1])
 
                     warn_obs = exec_action_type(info, web_ele, driver_task)
@@ -516,6 +527,11 @@ def main():
         logging.info(f'Total cost: {accumulate_prompt_token / 1000 * 0.01 + accumulate_completion_token / 1000 * 0.03}')
 
 
+def main():
+    print('Start the process')
+    tasks = create_price_extraction_tasks(['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/'], 'ipad pro 2024')
+    run_tasks(tasks)
+    
 if __name__ == '__main__':
     main()
     print('End of process')
