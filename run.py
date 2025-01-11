@@ -530,11 +530,19 @@ def main():
 
     args = parser.parse_args()
 
-    st.title("AI Price Comparator")
-    st.write("Click the button to start the app")
+    st.markdown("<h1 style='text-align: center;'>AI Price Comparator</h1>", unsafe_allow_html=True)
 
-    if st.button("Start App"):
-        tasks = create_price_extraction_tasks(['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/'], 'ipad pro 2024')
+    product_name = st.text_input("Enter the product name:", "ipad pro 2024")
+
+    default_sites = ['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/']
+    selected_sites = st.multiselect("Select websites to search:", default_sites, default=default_sites)
+    custom_site = st.text_input("Add a custom website URL:")
+    
+    if custom_site:
+        selected_sites.append(custom_site)
+        
+    if st.button("Search for product prices"):
+        tasks = create_price_extraction_tasks(selected_sites, product_name)
         run_tasks(args, tasks)
 
     logging.info("Streamlit interface launched.")
