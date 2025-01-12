@@ -2,7 +2,7 @@ set -a
 source .env
 set +a
 
-python -u run.py \
+streamlit run run.py -- \
     --test_file ./data/tasks_test.jsonl \
     --api_key "$OPENAI_API_KEY" \
     --max_iter 8 \

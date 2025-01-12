@@ -3,7 +3,7 @@
 Vezi readme-ul initial. trebuie instalat conda, selenium, etc
 
 ```
-python -u run.py \
+streamlit run run.py -- \
     --test_file ./data/tasks_test.jsonl \
     --api_key SECRET_XXXXXXXX_KEY \
     --max_iter 8 \

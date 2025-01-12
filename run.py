@@ -6,6 +6,7 @@ import re
 import os
 import shutil
 import logging
+import streamlit as st
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -267,28 +268,7 @@ def load_tasks_from_file(file):
             tasks.append(json.loads(line))
     return tasks
 
-def run_tasks(tasks):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--test_file', type=str, default='data/test.json')
-    parser.add_argument('--max_iter', type=int, default=5)
-    parser.add_argument("--api_key", default="key", type=str, help="YOUR_OPENAI_API_KEY")
-    parser.add_argument("--api_model", default="gpt-4o-mini", type=str, help="api model name")
-    parser.add_argument("--output_dir", type=str, default='results')
-    parser.add_argument("--seed", type=int, default=None)
-    parser.add_argument("--max_attached_imgs", type=int, default=1)
-    parser.add_argument("--temperature", type=float, default=1.0)
-    parser.add_argument("--download_dir", type=str, default="downloads")
-    parser.add_argument("--text_only", action='store_true')
-    # for web browser
-    parser.add_argument("--headless", action='store_true', help='The window of selenium')
-    parser.add_argument("--save_accessibility_tree", action='store_true')
-    parser.add_argument("--force_device_scale", action='store_true')
-    parser.add_argument("--window_width", type=int, default=1024)
-    parser.add_argument("--window_height", type=int, default=768)  # for headless mode, there is no address bar
-    parser.add_argument("--fix_box_color", action='store_true')
-
-    args = parser.parse_args()
-    
+def run_tasks(args, tasks):
     # OpenAI client
     client = OpenAI(api_key=args.api_key)
     
@@ -525,12 +505,54 @@ def run_tasks(tasks):
         print_message(messages, task_dir)
         driver_task.quit()
         logging.info(f'Total cost: {accumulate_prompt_token / 1000 * 0.01 + accumulate_completion_token / 1000 * 0.03}')
-
-
+        
 def main():
-    print('Start the process')
-    tasks = create_price_extraction_tasks(['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/'], 'ipad pro 2024')
-    run_tasks(tasks)
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Starting the Streamlit interface...")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--test_file', type=str, default='data/tasks_test.jsonl')
+    parser.add_argument('--max_iter', type=int, default=5)
+    parser.add_argument("--api_key", default="key", type=str, help="YOUR_OPENAI_API_KEY")
+    parser.add_argument("--api_model", default="gpt-4o-mini", type=str, help="api model name")
+    parser.add_argument("--output_dir", type=str, default='results')
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--max_attached_imgs", type=int, default=1)
+    parser.add_argument("--temperature", type=float, default=1.0)
+    parser.add_argument("--download_dir", type=str, default="downloads")
+    parser.add_argument("--text_only", action='store_true')
+    parser.add_argument("--headless", action='store_true', help='The window of selenium')
+    parser.add_argument("--save_accessibility_tree", action='store_true')
+    parser.add_argument("--force_device_scale", action='store_true')
+    parser.add_argument("--window_width", type=int, default=1024)
+    parser.add_argument("--window_height", type=int, default=768)
+    parser.add_argument("--fix_box_color", action='store_true')
+
+    args = parser.parse_args()
+
+    st.markdown("<h1 style='text-align: center;'>AI Price Comparator</h1>", unsafe_allow_html=True)
+
+    product_name = st.text_input("Enter the product name:", placeholder="Product name...")
+    if product_name:
+        st.write("You entered:", product_name)
+    
+    default_sites = ['https://www.emag.ro/', 'https://www.flanco.ro/', 'https://www.cel.ro/']
+    selected_sites_list = st.multiselect("Select some websites to search from a default list:", default_sites)
+    
+    custom_site = st.text_area("You may also add custom website URLs (one per line):", placeholder="https://example1.com\nhttps://example2.com")
+    custom_sites_list = custom_site.split('\n') if custom_site else []
+
+    all_sites = selected_sites_list + custom_sites_list
+    if all_sites != []:
+        st.write("Your final list of sites:")
+        for i, site in enumerate(all_sites, 1):
+            st.write(f"{i}. {site}")
+    
+    if st.button("Search for product prices"):
+        tasks = create_price_extraction_tasks(all_sites, product_name)
+        run_tasks(args, tasks)
+
+    logging.info("Streamlit interface launched.")
     
 if __name__ == '__main__':
     main()
