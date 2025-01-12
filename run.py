@@ -255,7 +255,7 @@ def create_price_extraction_tasks(websites, product):
     for i, website in enumerate(websites):
         task = {
             "id": f"{website.split('.')[1]}--{product}--{i+1}",
-            "ques": f"Extract the price of '{product}' from {website}. First try accepting the cookies of the page, then use the website's search function to find the product page. Then try scrolling until you find the product and open the product page to extract the price.",
+            "ques": f"Extract the price of '{product}' from {website}. First try using the website's search function to find the product page, then try scrolling until you find the product and open the product page to extract the price.",
             "web": website
         }
         tasks.append(task)
@@ -506,7 +506,21 @@ def run_tasks(args, tasks):
         print_message(messages, task_dir)
         driver_task.quit()
         logging.info(f'Total cost: {accumulate_prompt_token / 1000 * 0.01 + accumulate_completion_token / 1000 * 0.03}')
-        
+
+def extract_price_from_json(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        last_message = data[-1]["content"]
+        if "ANSWER;" in last_message:
+            price = last_message.split("ANSWER;")[1].strip()
+            return price
+        elif "Lei" in last_message:
+            match = re.search(r'(\d[\d,.]*)\s*Lei', last_message)
+            if match:
+                price = match.group(0)
+                return price
+        return "Price not found"
+      
 def main():
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting the Streamlit interface...")
@@ -551,9 +565,19 @@ def main():
     
     if st.button("Search for product prices"):
         tasks = create_price_extraction_tasks(all_sites, product_name)
+        
+        # Generate result directory path
+        current_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime())
+        result_dir = os.path.join(args.output_dir, current_time)
+        os.makedirs(result_dir, exist_ok=True)
+        
         run_tasks(args, tasks)
         
-        results = [{"Website": site, "Price": "unknown"} for site in all_sites]
+        # Dynamically get the JSON file path
+        json_file_path = os.path.join(result_dir, 'task--emag--Iphone 15--1', 'interact_messages.json')
+        price = extract_price_from_json(json_file_path)
+        
+        results = [{"Website": site, "Price": price} for site in all_sites]
         results_df = pd.DataFrame(results)
         
         st.write("Search Results:")
