@@ -254,7 +254,7 @@ def create_price_extraction_tasks(websites, product):
     for i, website in enumerate(websites):
         task = {
             "id": f"{website.split('.')[1]}--{product}--{i+1}",
-            "ques": f"Extract the price of '{product}' from {website}. First try using the website's search function to find the product page, then try scrolling until you find the product and open the product page to extract the price.",
+            "ques": f"Extract the price of '{product}' from {website}. First try accepting the cookies of the page, then use the website's search function to find the product page. Then try scrolling until you find the product and open the product page to extract the price.",
             "web": website
         }
         tasks.append(task)
