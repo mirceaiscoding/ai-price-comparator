@@ -7,6 +7,7 @@ import os
 import shutil
 import logging
 import streamlit as st
+import pandas as pd
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -551,6 +552,12 @@ def main():
     if st.button("Search for product prices"):
         tasks = create_price_extraction_tasks(all_sites, product_name)
         run_tasks(args, tasks)
+        
+        results = [{"Website": site, "Price": "unknown"} for site in all_sites]
+        results_df = pd.DataFrame(results)
+        
+        st.write("Search Results:")
+        st.table(results_df)
 
     logging.info("Streamlit interface launched.")
     
