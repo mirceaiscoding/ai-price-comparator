@@ -511,13 +511,10 @@ def extract_price_from_json(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
         last_message = data[-1]["content"]
-        if "ANSWER;" in last_message:
-            price = last_message.split("ANSWER;")[1].strip()
-            return price
-        elif "Lei" in last_message:
+        if "ANSWER;" or "Lei" in last_message:
             match = re.search(r'(\d[\d,.]*)\s*Lei', last_message)
             if match:
-                price = match.group(0)
+                price = match.group(1) + " Lei"
                 return price
         return "Price not found"
       
@@ -566,18 +563,21 @@ def main():
     if st.button("Search for product prices"):
         tasks = create_price_extraction_tasks(all_sites, product_name)
         
-        # Generate result directory path
-        current_time = time.strftime("%Y%m%d_%H_%M_%S", time.localtime())
-        result_dir = os.path.join(args.output_dir, current_time)
-        os.makedirs(result_dir, exist_ok=True)
+        result_dir = "E:/ai-price-comparator/results"
+        subdirs = [os.path.join(result_dir, d) for d in os.listdir(result_dir) if os.path.isdir(os.path.join(result_dir, d))]
+        latest_subdir = max(subdirs, key=os.path.getmtime)
         
         run_tasks(args, tasks)
         
-        # Dynamically get the JSON file path
-        json_file_path = os.path.join(result_dir, 'task--emag--Iphone 15--1', 'interact_messages.json')
-        price = extract_price_from_json(json_file_path)
+        results = []
+        for site, subdir in zip(all_sites, os.listdir(latest_subdir)):
+            subdir_path = os.path.join(latest_subdir, subdir)
+            if os.path.isdir(subdir_path):
+                json_file_path = os.path.join(subdir_path, 'interact_messages.json')
+                if os.path.exists(json_file_path):
+                    price = extract_price_from_json(json_file_path)
+                    results.append({"Website": site, "Price": price})
         
-        results = [{"Website": site, "Price": price} for site in all_sites]
         results_df = pd.DataFrame(results)
         
         st.write("Search Results:")
