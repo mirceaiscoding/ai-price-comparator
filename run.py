@@ -564,7 +564,7 @@ def main():
     if st.button("Search for product prices"):
         tasks = create_price_extraction_tasks(all_sites, product_name)
         
-        result_dir = "E:/ai-price-comparator/results"
+        result_dir = os.path.join(os.getcwd(), 'results')
         subdirs = [os.path.join(result_dir, d) for d in os.listdir(result_dir) if os.path.isdir(os.path.join(result_dir, d))]
         latest_subdir = max(subdirs, key=os.path.getmtime)
         
