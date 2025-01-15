@@ -553,6 +553,7 @@ def main():
     
     custom_site = st.text_area("You may also add custom website URLs (one per line):", placeholder="https://example1.com\nhttps://example2.com")
     custom_sites_list = custom_site.split('\n') if custom_site else []
+    custom_sites_list = [site.strip() for site in custom_sites_list if site.strip()]
 
     all_sites = selected_sites_list + custom_sites_list
     if all_sites != []:
@@ -570,13 +571,13 @@ def main():
         run_tasks(args, tasks)
         
         results = []
-        for site, subdir in zip(all_sites, os.listdir(latest_subdir)):
+        for i, subdir in enumerate(os.listdir(latest_subdir)):
             subdir_path = os.path.join(latest_subdir, subdir)
             if os.path.isdir(subdir_path):
                 json_file_path = os.path.join(subdir_path, 'interact_messages.json')
                 if os.path.exists(json_file_path):
                     price = extract_price_from_json(json_file_path)
-                    results.append({"Website": site, "Price": price})
+                    results.append({"Website": all_sites[i], "Price": price})
         
         results_df = pd.DataFrame(results)
         
